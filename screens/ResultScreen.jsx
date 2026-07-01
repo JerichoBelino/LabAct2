@@ -68,6 +68,39 @@ export default function ResultScreen({ route, navigation }) {
     runAnalysis();
   }, [base64Image, promptKey]);
 
+  const handleLoadDemo = () => {
+    setError(null);
+    setLoading(false);
+    
+    const demoData = {
+      academic: {
+        objects: ['Scientific Microscope', 'Petri Dishes', 'Glass Pipette', 'Specimen Slides'],
+        context: 'A laboratory work station set up for educational biology experiments or cell cultures (Loaded in Demo Mode due to API limits).',
+        activities: ['Conducting cell slide research', 'Examining bacteria development', 'Teaching microscope basics'],
+        recommendations: ['Calibrate lens elements', 'Use sterilizing procedures', 'Ensure safety goggles are worn']
+      },
+      safety: {
+        objects: ['Hard Hat', 'Safety Goggles', 'Reflective Safety Vest', 'Spill kit'],
+        context: 'A construction zone or warehouse inspection scene indicating compliance check safety gear (Loaded in Demo Mode due to API limits).',
+        activities: ['Performing site safety audit', 'Equipping protective gear', 'Marking high-hazard areas'],
+        recommendations: ['Inspect harness straps daily', 'Replace cracked hard hats', 'Post visibility signage']
+      },
+      inventory: {
+        objects: ['Cardboard Boxes', 'Storage Pallets', 'Barcode Scanner', 'Wooden Crates'],
+        context: 'A loading dock area containing products prepared for shipment and logistical processing (Loaded in Demo Mode due to API limits).',
+        activities: ['Logging item stock numbers', 'Moving pallets using fork lifts', 'Re-arranging storage shelves'],
+        recommendations: ['Maintain aisle clearance', 'Perform manual audits monthly', 'Tag damaged crates']
+      }
+    };
+    
+    setGeminiData(demoData[promptKey] || demoData.academic);
+    setRoboflowData({
+      predictions: [
+        { class: 'sample_object', confidence: 0.90 }
+      ]
+    });
+  };
+
   // Loading State
   if (loading) {
     return (
@@ -90,6 +123,11 @@ export default function ResultScreen({ route, navigation }) {
         <TouchableOpacity style={styles.retryButton} onPress={runAnalysis}>
           <MaterialCommunityIcons name="refresh" size={20} color={COLORS.text} />
           <Text style={styles.retryButtonText}>Retry Analysis</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.demoButton} onPress={handleLoadDemo}>
+          <MaterialCommunityIcons name="eye-outline" size={20} color={COLORS.primaryLight} />
+          <Text style={styles.demoButtonText}>Load Demo Data (Skip API)</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.backButton} onPress={() => navigation.navigate('Camera')}>
@@ -272,6 +310,23 @@ const styles = StyleSheet.create({
   },
   retryButtonText: {
     color: COLORS.text,
+    fontSize: SIZES.fontMd,
+    fontWeight: '600',
+  },
+  demoButton: {
+    backgroundColor: 'transparent',
+    borderWidth: 1.5,
+    borderColor: COLORS.primary,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    paddingVertical: SIZES.paddingSm + 2,
+    paddingHorizontal: SIZES.paddingLg,
+    borderRadius: SIZES.radiusRound,
+    marginBottom: SIZES.paddingMd,
+  },
+  demoButtonText: {
+    color: COLORS.primaryLight,
     fontSize: SIZES.fontMd,
     fontWeight: '600',
   },
